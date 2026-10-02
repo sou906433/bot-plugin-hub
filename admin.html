@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Admin - Bot Plugin Hub</title>
 
   <style>
+
     body {
       font-family: Arial, sans-serif;
       max-width: 500px;
-      margin: 50px auto;
+      margin: 40px auto;
       padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 25px;
     }
 
     input,
     button {
       width: 100%;
-      padding: 12px;
+      padding: 13px;
       margin: 8px 0;
       box-sizing: border-box;
+      font-size: 16px;
     }
 
     button {
@@ -31,30 +43,45 @@
     }
 
     #message {
-      margin-top: 15px;
+      margin-top: 20px;
       white-space: pre-wrap;
       word-break: break-word;
-    }
-
-    .error {
-      color: red;
+      line-height: 1.6;
     }
 
     .success {
       color: green;
     }
 
+    .error {
+      color: red;
+    }
+
     .info {
       color: #555;
     }
+
+    .testBox {
+      margin-top: 25px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
   </style>
+
 </head>
 
+
 <body>
+
+
+  <!-- LOGIN -->
 
   <div id="loginBox">
 
     <h1>🔐 Admin Login</h1>
+
 
     <input
       type="email"
@@ -63,6 +90,7 @@
       autocomplete="email"
     >
 
+
     <input
       type="password"
       id="password"
@@ -70,20 +98,40 @@
       autocomplete="current-password"
     >
 
+
     <button id="loginBtn">
       Login
     </button>
 
-    <p id="message" class="info"></p>
+
+    <p id="message" class="info">
+      Checking Supabase connection...
+    </p>
+
+
+    <div class="testBox">
+
+      <strong>🔎 Connection Test</strong>
+
+      <p id="testResult">
+        Testing...
+      </p>
+
+    </div>
 
   </div>
 
+
+
+  <!-- ADMIN PANEL -->
 
   <div id="adminPanel">
 
     <h1>🛠️ Admin Panel</h1>
 
-    <p>Welcome, Admin! ✅</p>
+    <p>
+      Welcome, Admin! ✅
+    </p>
 
     <p id="userInfo"></p>
 
@@ -94,68 +142,118 @@
   </div>
 
 
+
   <script type="module">
+
+
+    /*
+     * SUPABASE
+     * =========================
+     */
 
     import {
       createClient
-    } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    } from
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
 
 
     /*
      * SUPABASE CONFIG
+     * =========================
      */
 
     const SUPABASE_URL =
       'https://vsrljoydwxrwtiqfasp.supabase.co';
 
+
     const SUPABASE_KEY =
       'sb_publishable_xSD13T4p8GAByYCTWYjw9g_xfn49aSj';
 
 
+
     /*
-     * CREATE SUPABASE CLIENT
+     * CREATE CLIENT
+     * =========================
      */
 
-    const supabase = createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    const supabase =
+      createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
 
 
     /*
      * ELEMENTS
+     * =========================
      */
 
     const loginBox =
-      document.getElementById('loginBox');
+      document.getElementById(
+        'loginBox'
+      );
+
 
     const adminPanel =
-      document.getElementById('adminPanel');
+      document.getElementById(
+        'adminPanel'
+      );
+
 
     const message =
-      document.getElementById('message');
+      document.getElementById(
+        'message'
+      );
+
+
+    const testResult =
+      document.getElementById(
+        'testResult'
+      );
+
 
     const emailInput =
-      document.getElementById('email');
+      document.getElementById(
+        'email'
+      );
+
 
     const passwordInput =
-      document.getElementById('password');
+      document.getElementById(
+        'password'
+      );
+
 
     const loginBtn =
-      document.getElementById('loginBtn');
+      document.getElementById(
+        'loginBtn'
+      );
+
 
     const logoutBtn =
-      document.getElementById('logoutBtn');
+      document.getElementById(
+        'logoutBtn'
+      );
+
 
     const userInfo =
-      document.getElementById('userInfo');
+      document.getElementById(
+        'userInfo'
+      );
+
 
 
     /*
-     * SHOW MESSAGE
+     * MESSAGE
+     * =========================
      */
 
-    function showMessage(text, type = 'info') {
+    function showMessage(
+      text,
+      type = 'info'
+    ) {
 
       message.textContent = text;
 
@@ -164,15 +262,97 @@
     }
 
 
+
+    /*
+     * AUTH CONNECTION TEST
+     * =========================
+     */
+
+    async function testAuthConnection() {
+
+      testResult.textContent =
+        'Testing Supabase Auth...';
+
+      testResult.className =
+        'info';
+
+
+      try {
+
+        const response =
+          await fetch(
+            SUPABASE_URL +
+            '/auth/v1/settings',
+            {
+              method: 'GET',
+
+              headers: {
+                'apikey':
+                  SUPABASE_KEY
+              }
+            }
+          );
+
+
+        const responseText =
+          await response.text();
+
+
+        if (response.ok) {
+
+          testResult.textContent =
+            '✅ Supabase Auth is reachable.\n\n' +
+            'HTTP Status: ' +
+            response.status +
+            '\n\nResponse:\n' +
+            responseText;
+
+          testResult.className =
+            'success';
+
+        } else {
+
+          testResult.textContent =
+            '❌ Supabase Auth returned an error.\n\n' +
+            'HTTP Status: ' +
+            response.status +
+            '\n\nResponse:\n' +
+            responseText;
+
+          testResult.className =
+            'error';
+
+        }
+
+
+      } catch (error) {
+
+        testResult.textContent =
+          '❌ AUTH CONNECTION FAILED\n\n' +
+          error.message;
+
+        testResult.className =
+          'error';
+
+      }
+
+    }
+
+
+
     /*
      * CHECK ADMIN
+     * =========================
      */
 
     async function checkAdmin(user) {
 
       if (!user) {
+
         return false;
+
       }
+
 
       const {
         data,
@@ -180,13 +360,14 @@
       } = await supabase
         .from('admins')
         .select('user_id')
-        .eq('user_id', user.id)
+        .eq(
+          'user_id',
+          user.id
+        )
         .maybeSingle();
 
 
       if (error) {
-
-        console.error('Admin check error:', error);
 
         throw new Error(
           'Admin check failed:\n' +
@@ -201,109 +382,65 @@
     }
 
 
+
     /*
      * SHOW ADMIN PANEL
+     * =========================
      */
 
     function showAdminPanel(user) {
 
-      loginBox.style.display = 'none';
+      loginBox.style.display =
+        'none';
 
-      adminPanel.style.display = 'block';
+
+      adminPanel.style.display =
+        'block';
+
 
       userInfo.textContent =
-        'Logged in as: ' + user.email;
+        'Logged in as: ' +
+        user.email;
 
     }
+
 
 
     /*
      * SHOW LOGIN
+     * =========================
      */
 
     function showLogin() {
 
-      loginBox.style.display = 'block';
-
-      adminPanel.style.display = 'none';
-
-      userInfo.textContent = '';
-
-    }
+      loginBox.style.display =
+        'block';
 
 
-    /*
-     * TEST SUPABASE CONNECTION
-     */
-
-    async function testSupabase() {
-
-      try {
-
-        showMessage(
-          'Checking Supabase connection...',
-          'info'
-        );
+      adminPanel.style.display =
+        'none';
 
 
-        const {
-          data,
-          error
-        } = await supabase.auth.getSession();
-
-
-        if (error) {
-
-          showMessage(
-            'SUPABASE ERROR:\n\n' +
-            error.message,
-            'error'
-          );
-
-          return false;
-
-        }
-
-
-        console.log(
-          'Supabase session:',
-          data
-        );
-
-
-        showMessage(
-          'Supabase connection OK. Now login.',
-          'success'
-        );
-
-        return true;
-
-
-      } catch (error) {
-
-        showMessage(
-          'CONNECTION ERROR:\n\n' +
-          error.message,
-          'error'
-        );
-
-        return false;
-
-      }
+      userInfo.textContent =
+        '';
 
     }
+
 
 
     /*
      * LOGIN
+     * =========================
      */
 
     loginBtn.addEventListener(
       'click',
       async () => {
 
+
         const email =
           emailInput.value.trim();
+
 
         const password =
           passwordInput.value;
@@ -333,7 +470,9 @@
         }
 
 
-        loginBtn.disabled = true;
+        loginBtn.disabled =
+          true;
+
 
         loginBtn.textContent =
           'Logging in...';
@@ -347,8 +486,9 @@
 
         try {
 
+
           /*
-           * LOGIN REQUEST
+           * SIGN IN
            */
 
           const {
@@ -364,6 +504,7 @@
             });
 
 
+
           /*
            * LOGIN ERROR
            */
@@ -374,15 +515,22 @@
               'LOGIN ERROR:\n\n' +
               error.message +
               '\n\nError name: ' +
-              (error.name || 'Unknown') +
+              (
+                error.name ||
+                'Unknown'
+              ) +
               '\n\nStatus: ' +
-              (error.status || 'Unknown'),
+              (
+                error.status ||
+                'Unknown'
+              ),
               'error'
             );
 
             return;
 
           }
+
 
 
           /*
@@ -405,15 +553,16 @@
           }
 
 
-          showMessage(
-            'Login successful. Checking admin access...',
-            'info'
-          );
-
 
           /*
            * ADMIN CHECK
            */
+
+          showMessage(
+            'Login successful!\n\nChecking admin access...',
+            'info'
+          );
+
 
           const isAdmin =
             await checkAdmin(user);
@@ -435,6 +584,7 @@
           }
 
 
+
           /*
            * SUCCESS
            */
@@ -444,24 +594,17 @@
 
         } catch (error) {
 
-          console.error(
-            'Unexpected error:',
-            error
-          );
-
-
           showMessage(
             'UNEXPECTED ERROR:\n\n' +
-            error.message +
-            '\n\nType: ' +
-            typeof error,
+            error.message,
             'error'
           );
 
-
         } finally {
 
-          loginBtn.disabled = false;
+          loginBtn.disabled =
+            false;
+
 
           loginBtn.textContent =
             'Login';
@@ -472,8 +615,10 @@
     );
 
 
+
     /*
      * LOGOUT
+     * =========================
      */
 
     logoutBtn.addEventListener(
@@ -482,13 +627,20 @@
 
         try {
 
-          await supabase.auth.signOut();
+          await supabase.auth
+            .signOut();
+
 
           showLogin();
 
-          emailInput.value = '';
 
-          passwordInput.value = '';
+          emailInput.value =
+            '';
+
+
+          passwordInput.value =
+            '';
+
 
           showMessage(
             'Logged out successfully.',
@@ -510,8 +662,10 @@
     );
 
 
+
     /*
-     * AUTO CHECK EXISTING SESSION
+     * CHECK EXISTING SESSION
+     * =========================
      */
 
     async function checkExistingSession() {
@@ -521,13 +675,14 @@
         const {
           data,
           error
-        } = await supabase.auth.getSession();
+        } = await supabase.auth
+          .getSession();
 
 
         if (error) {
 
           showMessage(
-            'STARTUP ERROR:\n\n' +
+            'SESSION ERROR:\n\n' +
             error.message,
             'error'
           );
@@ -537,8 +692,10 @@
         }
 
 
-        if (data.session &&
-            data.session.user) {
+        if (
+          data.session &&
+          data.session.user
+        ) {
 
           const isAdmin =
             await checkAdmin(
@@ -554,7 +711,8 @@
 
           } else {
 
-            await supabase.auth.signOut();
+            await supabase.auth
+              .signOut();
 
           }
 
@@ -573,13 +731,26 @@
     }
 
 
+
     /*
-     * START
+     * START TEST
+     * =========================
+     */
+
+    testAuthConnection();
+
+
+    /*
+     * START SESSION CHECK
+     * =========================
      */
 
     checkExistingSession();
 
+
   </script>
 
+
 </body>
-  </html>
+
+</html>
