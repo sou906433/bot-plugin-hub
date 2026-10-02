@@ -5,10 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bot Plugin Hub</title>
 </head>
+
 <body>
 
   <h1>🚀 Bot Plugin Hub</h1>
   <p>My WhatsApp Bot Plugins</p>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL = 'https://vsrljoydwxrwwtiqfasp.supabase.co/rest/v1/';
+    const SUPABASE_KEY = 'sb_publishable_xSD13T4p8GAByYCTWYjw9g_xfn49aSj';
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    console.log('Supabase connected');
+  </script>
 
 </body>
 </html>
