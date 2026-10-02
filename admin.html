@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Bot Plugin Hub</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #adminPanel {
+      display: none;
+    }
+
+    #message {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loginBox">
+    <h1>🔐 Admin Login</h1>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Admin Email"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
+
+    <button id="loginBtn">Login</button>
+
+    <p id="message"></p>
+  </div>
+
+  <div id="adminPanel">
+    <h1>🛠️ Admin Panel</h1>
+
+    <p>Welcome, Admin!</p>
+
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script type="module">
+
+    import {
+      createClient
+    } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL = 'https://vsrljoydwxrwwtiqfasp.supabase.co/rest/v1/';
+    const SUPABASE_KEY = 'sb_publishable_xSD13T4p8GAByYCTWYjw9g_xfn49aSj';
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const loginBox = document.getElementById('loginBox');
+    const adminPanel = document.getElementById('adminPanel');
+    const message = document.getElementById('message');
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        message.textContent = 'Email and password required!';
+        return;
+      }
+
+      message.textContent = 'Logging in...';
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      const user = data.user;
+
+      const { data: admin, error: adminError } = await supabase
+        .from('admins')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (adminError || !admin) {
+        await supabase.auth.signOut();
+
+        message.textContent = 'Access denied. You are not an admin.';
+        return;
+      }
+
+      loginBox.style.display = 'none';
+      adminPanel.style.display = 'block';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+
+      adminPanel.style.display = 'none';
+      loginBox.style.display = 'block';
+      message.textContent = 'Logged out.';
+    });
+
+  </script>
+
+</body>
+</html>
