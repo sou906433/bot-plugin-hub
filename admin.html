@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Admin - Bot Plugin Hub</title>
 
   <style>
@@ -13,7 +14,8 @@
       padding: 20px;
     }
 
-    input, button {
+    input,
+    button {
       width: 100%;
       padding: 12px;
       margin: 8px 0;
@@ -30,6 +32,20 @@
 
     #message {
       margin-top: 15px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .info {
+      color: #555;
     }
   </style>
 </head>
@@ -37,101 +53,533 @@
 <body>
 
   <div id="loginBox">
+
     <h1>🔐 Admin Login</h1>
 
     <input
       type="email"
       id="email"
       placeholder="Admin Email"
+      autocomplete="email"
     >
 
     <input
       type="password"
       id="password"
       placeholder="Password"
+      autocomplete="current-password"
     >
 
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn">
+      Login
+    </button>
 
-    <p id="message"></p>
+    <p id="message" class="info"></p>
+
   </div>
+
 
   <div id="adminPanel">
+
     <h1>🛠️ Admin Panel</h1>
 
-    <p>Welcome, Admin!</p>
+    <p>Welcome, Admin! ✅</p>
 
-    <button id="logoutBtn">Logout</button>
+    <p id="userInfo"></p>
+
+    <button id="logoutBtn">
+      Logout
+    </button>
+
   </div>
+
 
   <script type="module">
 
     import {
       createClient
-    } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    const SUPABASE_URL = 'https://vsrljoydwxrwwtiqfasp.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_xSD13T4p8GAByYCTWYjw9g_xfn49aSj';
+
+    /*
+     * SUPABASE CONFIG
+     */
+
+    const SUPABASE_URL =
+      'https://vsrljoydwxrwtiqfasp.supabase.co';
+
+    const SUPABASE_KEY =
+      'তোমার_আগের_sb_publishable_key_এখানে';
+
+
+    /*
+     * CREATE SUPABASE CLIENT
+     */
 
     const supabase = createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
 
-    const loginBox = document.getElementById('loginBox');
-    const adminPanel = document.getElementById('adminPanel');
-    const message = document.getElementById('message');
 
-    document.getElementById('loginBtn').addEventListener('click', async () => {
+    /*
+     * ELEMENTS
+     */
 
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+    const loginBox =
+      document.getElementById('loginBox');
 
-      if (!email || !password) {
-        message.textContent = 'Email and password required!';
-        return;
+    const adminPanel =
+      document.getElementById('adminPanel');
+
+    const message =
+      document.getElementById('message');
+
+    const emailInput =
+      document.getElementById('email');
+
+    const passwordInput =
+      document.getElementById('password');
+
+    const loginBtn =
+      document.getElementById('loginBtn');
+
+    const logoutBtn =
+      document.getElementById('logoutBtn');
+
+    const userInfo =
+      document.getElementById('userInfo');
+
+
+    /*
+     * SHOW MESSAGE
+     */
+
+    function showMessage(text, type = 'info') {
+
+      message.textContent = text;
+
+      message.className = type;
+
+    }
+
+
+    /*
+     * CHECK ADMIN
+     */
+
+    async function checkAdmin(user) {
+
+      if (!user) {
+        return false;
       }
 
-      message.textContent = 'Logging in...';
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        message.textContent = error.message;
-        return;
-      }
-
-      const user = data.user;
-
-      const { data: admin, error: adminError } = await supabase
+      const {
+        data,
+        error
+      } = await supabase
         .from('admins')
         .select('user_id')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (adminError || !admin) {
-        await supabase.auth.signOut();
 
-        message.textContent = 'Access denied. You are not an admin.';
-        return;
+      if (error) {
+
+        console.error('Admin check error:', error);
+
+        throw new Error(
+          'Admin check failed:\n' +
+          error.message
+        );
+
       }
 
-      loginBox.style.display = 'none';
-      adminPanel.style.display = 'block';
-    });
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await supabase.auth.signOut();
+      return !!data;
+
+    }
+
+
+    /*
+     * SHOW ADMIN PANEL
+     */
+
+    function showAdminPanel(user) {
+
+      loginBox.style.display = 'none';
+
+      adminPanel.style.display = 'block';
+
+      userInfo.textContent =
+        'Logged in as: ' + user.email;
+
+    }
+
+
+    /*
+     * SHOW LOGIN
+     */
+
+    function showLogin() {
+
+      loginBox.style.display = 'block';
 
       adminPanel.style.display = 'none';
-      loginBox.style.display = 'block';
-      message.textContent = 'Logged out.';
-    });
+
+      userInfo.textContent = '';
+
+    }
+
+
+    /*
+     * TEST SUPABASE CONNECTION
+     */
+
+    async function testSupabase() {
+
+      try {
+
+        showMessage(
+          'Checking Supabase connection...',
+          'info'
+        );
+
+
+        const {
+          data,
+          error
+        } = await supabase.auth.getSession();
+
+
+        if (error) {
+
+          showMessage(
+            'SUPABASE ERROR:\n\n' +
+            error.message,
+            'error'
+          );
+
+          return false;
+
+        }
+
+
+        console.log(
+          'Supabase session:',
+          data
+        );
+
+
+        showMessage(
+          'Supabase connection OK. Now login.',
+          'success'
+        );
+
+        return true;
+
+
+      } catch (error) {
+
+        showMessage(
+          'CONNECTION ERROR:\n\n' +
+          error.message,
+          'error'
+        );
+
+        return false;
+
+      }
+
+    }
+
+
+    /*
+     * LOGIN
+     */
+
+    loginBtn.addEventListener(
+      'click',
+      async () => {
+
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        if (!email) {
+
+          showMessage(
+            'Email required!',
+            'error'
+          );
+
+          return;
+
+        }
+
+
+        if (!password) {
+
+          showMessage(
+            'Password required!',
+            'error'
+          );
+
+          return;
+
+        }
+
+
+        loginBtn.disabled = true;
+
+        loginBtn.textContent =
+          'Logging in...';
+
+
+        showMessage(
+          'Connecting to Supabase...',
+          'info'
+        );
+
+
+        try {
+
+          /*
+           * LOGIN REQUEST
+           */
+
+          const {
+            data,
+            error
+          } = await supabase.auth
+            .signInWithPassword({
+
+              email: email,
+
+              password: password
+
+            });
+
+
+          /*
+           * LOGIN ERROR
+           */
+
+          if (error) {
+
+            showMessage(
+              'LOGIN ERROR:\n\n' +
+              error.message +
+              '\n\nError name: ' +
+              (error.name || 'Unknown') +
+              '\n\nStatus: ' +
+              (error.status || 'Unknown'),
+              'error'
+            );
+
+            return;
+
+          }
+
+
+          /*
+           * USER
+           */
+
+          const user =
+            data.user;
+
+
+          if (!user) {
+
+            showMessage(
+              'Login completed but user was not returned.',
+              'error'
+            );
+
+            return;
+
+          }
+
+
+          showMessage(
+            'Login successful. Checking admin access...',
+            'info'
+          );
+
+
+          /*
+           * ADMIN CHECK
+           */
+
+          const isAdmin =
+            await checkAdmin(user);
+
+
+          if (!isAdmin) {
+
+            await supabase.auth.signOut();
+
+
+            showMessage(
+              'ACCESS DENIED!\n\n' +
+              'This account is not registered as an admin.',
+              'error'
+            );
+
+            return;
+
+          }
+
+
+          /*
+           * SUCCESS
+           */
+
+          showAdminPanel(user);
+
+
+        } catch (error) {
+
+          console.error(
+            'Unexpected error:',
+            error
+          );
+
+
+          showMessage(
+            'UNEXPECTED ERROR:\n\n' +
+            error.message +
+            '\n\nType: ' +
+            typeof error,
+            'error'
+          );
+
+
+        } finally {
+
+          loginBtn.disabled = false;
+
+          loginBtn.textContent =
+            'Login';
+
+        }
+
+      }
+    );
+
+
+    /*
+     * LOGOUT
+     */
+
+    logoutBtn.addEventListener(
+      'click',
+      async () => {
+
+        try {
+
+          await supabase.auth.signOut();
+
+          showLogin();
+
+          emailInput.value = '';
+
+          passwordInput.value = '';
+
+          showMessage(
+            'Logged out successfully.',
+            'success'
+          );
+
+
+        } catch (error) {
+
+          showMessage(
+            'Logout error:\n\n' +
+            error.message,
+            'error'
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+     * AUTO CHECK EXISTING SESSION
+     */
+
+    async function checkExistingSession() {
+
+      try {
+
+        const {
+          data,
+          error
+        } = await supabase.auth.getSession();
+
+
+        if (error) {
+
+          showMessage(
+            'STARTUP ERROR:\n\n' +
+            error.message,
+            'error'
+          );
+
+          return;
+
+        }
+
+
+        if (data.session &&
+            data.session.user) {
+
+          const isAdmin =
+            await checkAdmin(
+              data.session.user
+            );
+
+
+          if (isAdmin) {
+
+            showAdminPanel(
+              data.session.user
+            );
+
+          } else {
+
+            await supabase.auth.signOut();
+
+          }
+
+        }
+
+      } catch (error) {
+
+        showMessage(
+          'STARTUP ERROR:\n\n' +
+          error.message,
+          'error'
+        );
+
+      }
+
+    }
+
+
+    /*
+     * START
+     */
+
+    checkExistingSession();
 
   </script>
 
 </body>
-</html>
+  </html>
