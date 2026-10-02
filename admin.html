@@ -1,154 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Admin - Bot Plugin Hub</title>
+  <title>Bot Plugin Hub - Admin</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
 
     body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: 40px auto;
+      margin: 0;
       padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
     }
 
     h1 {
+      text-align: center;
       margin-bottom: 25px;
     }
 
-    input,
-    button {
+    .card {
+      background: #1e293b;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input {
       width: 100%;
       padding: 13px;
-      margin: 8px 0;
-      box-sizing: border-box;
-      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      background: #0f172a;
+      color: white;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #38bdf8;
     }
 
     button {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .login-btn {
+      background: #22c55e;
+      color: white;
+    }
+
+    .test-btn {
+      background: #38bdf8;
+      color: #082f49;
+    }
+
+    .logout-btn {
+      background: #ef4444;
+      color: white;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+    }
+
+    .info {
+      background: #172554;
+      color: #bfdbfe;
+    }
+
+    .success {
+      background: #052e16;
+      color: #86efac;
+    }
+
+    .error {
+      background: #450a0a;
+      color: #fca5a5;
     }
 
     #adminPanel {
       display: none;
     }
 
-    #message {
-      margin-top: 20px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.6;
+    .status {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #94a3b8;
     }
-
-    .success {
-      color: green;
-    }
-
-    .error {
-      color: red;
-    }
-
-    .info {
-      color: #555;
-    }
-
-    .testBox {
-      margin-top: 25px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
   </style>
-
 </head>
-
 
 <body>
 
+  <div class="container">
 
-  <!-- LOGIN -->
+    <h1>⚡ Bot Plugin Hub</h1>
 
-  <div id="loginBox">
+    <!-- CONNECTION TEST -->
+    <div class="card">
 
-    <h1>🔐 Admin Login</h1>
+      <h2>🔌 Supabase Connection</h2>
 
-
-    <input
-      type="email"
-      id="email"
-      placeholder="Admin Email"
-      autocomplete="email"
-    >
-
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
-
-
-    <button id="loginBtn">
-      Login
-    </button>
-
-
-    <p id="message" class="info">
-      Checking Supabase connection...
-    </p>
-
-
-    <div class="testBox">
-
-      <strong>🔎 Connection Test</strong>
-
-      <p id="testResult">
-        Testing...
+      <p class="status">
+        Testing Supabase Auth connection
       </p>
+
+      <button
+        class="test-btn"
+        id="testButton"
+      >
+        Test Auth Connection
+      </button>
+
+      <div
+        id="testResult"
+        class="result info"
+      >
+        Waiting for test...
+      </div>
+
+    </div>
+
+
+    <!-- LOGIN -->
+    <div
+      class="card"
+      id="loginCard"
+    >
+
+      <h2>🔐 Admin Login</h2>
+
+      <label for="email">
+        Email
+      </label>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Admin email"
+        autocomplete="email"
+      >
+
+      <label for="password">
+        Password
+      </label>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Admin password"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="login-btn"
+        id="loginButton"
+      >
+        Login
+      </button>
+
+      <div
+        id="loginResult"
+        class="result info"
+      >
+        Enter your admin login details.
+      </div>
+
+    </div>
+
+
+    <!-- ADMIN PANEL -->
+    <div
+      class="card"
+      id="adminPanel"
+    >
+
+      <h2>🛠️ Admin Panel</h2>
+
+      <div
+        id="adminInfo"
+        class="result success"
+      ></div>
+
+      <button
+        class="logout-btn"
+        id="logoutButton"
+      >
+        Logout
+      </button>
 
     </div>
 
   </div>
 
 
-
-  <!-- ADMIN PANEL -->
-
-  <div id="adminPanel">
-
-    <h1>🛠️ Admin Panel</h1>
-
-    <p>
-      Welcome, Admin! ✅
-    </p>
-
-    <p id="userInfo"></p>
-
-    <button id="logoutBtn">
-      Logout
-    </button>
-
-  </div>
-
-
-
   <script type="module">
+
+    /*
+     * ============================================================
+     * SUPABASE CONFIG
+     * ============================================================
+     */
+
+    const SUPABASE_URL =
+      'https://vsrljoydwxrwtiqfasp.supabase.co';
 
 
     /*
-     * SUPABASE
-     * =========================
+     * IMPORTANT:
+     * এখানে তোমার আগের sb_publishable_... key বসাও।
+     *
+     * Secret key / service_role key এখানে কখনো বসাবে না।
+     */
+
+    const SUPABASE_KEY =
+      'sb_publishable_xSD13T4p8GAByYCTWYjw9g_xfn49aSj';
+
+
+    /*
+     * ============================================================
+     * IMPORT SUPABASE
+     * ============================================================
      */
 
     import {
@@ -157,24 +263,10 @@
       'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 
-
     /*
-     * SUPABASE CONFIG
-     * =========================
-     */
-
-    const SUPABASE_URL =
-      'https://vsrljoydwxrwtiqfasp.supabase.co';
-
-
-    const SUPABASE_KEY =
-      'sb_publishable_xSD13T4p8GAByYCTWYjw9g_xfn49aSj';
-
-
-
-    /*
+     * ============================================================
      * CREATE CLIENT
-     * =========================
+     * ============================================================
      */
 
     const supabase =
@@ -184,41 +276,56 @@
       );
 
 
-
     /*
+     * ============================================================
      * ELEMENTS
-     * =========================
+     * ============================================================
      */
 
-    const loginBox =
+    const testButton =
       document.getElementById(
-        'loginBox'
+        'testButton'
       );
-
-
-    const adminPanel =
-      document.getElementById(
-        'adminPanel'
-      );
-
-
-    const message =
-      document.getElementById(
-        'message'
-      );
-
 
     const testResult =
       document.getElementById(
         'testResult'
       );
 
+    const loginButton =
+      document.getElementById(
+        'loginButton'
+      );
+
+    const loginResult =
+      document.getElementById(
+        'loginResult'
+      );
+
+    const logoutButton =
+      document.getElementById(
+        'logoutButton'
+      );
+
+    const loginCard =
+      document.getElementById(
+        'loginCard'
+      );
+
+    const adminPanel =
+      document.getElementById(
+        'adminPanel'
+      );
+
+    const adminInfo =
+      document.getElementById(
+        'adminInfo'
+      );
 
     const emailInput =
       document.getElementById(
         'email'
       );
-
 
     const passwordInput =
       document.getElementById(
@@ -226,46 +333,16 @@
       );
 
 
-    const loginBtn =
-      document.getElementById(
-        'loginBtn'
-      );
-
-
-    const logoutBtn =
-      document.getElementById(
-        'logoutBtn'
-      );
-
-
-    const userInfo =
-      document.getElementById(
-        'userInfo'
-      );
-
-
-
     /*
-     * MESSAGE
-     * =========================
-     */
-
-    function showMessage(
-      text,
-      type = 'info'
-    ) {
-
-      message.textContent = text;
-
-      message.className = type;
-
-    }
-
-
-
-    /*
-     * AUTH CONNECTION TEST
-     * =========================
+     * ============================================================
+     * TEST AUTH CONNECTION
+     * ============================================================
+     *
+     * এবার apikey header ব্যবহার করছি না।
+     *
+     * apikey query parameter দিয়ে request যাচ্ছে।
+     * এতে custom-header CORS/preflight সমস্যা আছে কিনা
+     * আলাদা করে বোঝা যাবে।
      */
 
     async function testAuthConnection() {
@@ -274,22 +351,24 @@
         'Testing Supabase Auth...';
 
       testResult.className =
-        'info';
+        'result info';
 
 
       try {
 
+        const url =
+          SUPABASE_URL +
+          '/auth/v1/settings?apikey=' +
+          encodeURIComponent(
+            SUPABASE_KEY
+          );
+
+
         const response =
           await fetch(
-            SUPABASE_URL +
-            '/auth/v1/settings',
+            url,
             {
-              method: 'GET',
-
-              headers: {
-                'apikey':
-                  SUPABASE_KEY
-              }
+              method: 'GET'
             }
           );
 
@@ -301,360 +380,287 @@
         if (response.ok) {
 
           testResult.textContent =
-            '✅ Supabase Auth is reachable.\n\n' +
+            '✅ AUTH CONNECTION WORKING\n\n' +
             'HTTP Status: ' +
             response.status +
-            '\n\nResponse:\n' +
+            '\n\n' +
+            'Supabase Auth replied successfully.\n\n' +
+            'Response:\n' +
             responseText;
 
           testResult.className =
-            'success';
+            'result success';
 
         } else {
 
           testResult.textContent =
-            '❌ Supabase Auth returned an error.\n\n' +
+            '❌ AUTH SERVER REPLIED\n\n' +
             'HTTP Status: ' +
             response.status +
-            '\n\nResponse:\n' +
+            '\n\n' +
+            'Response:\n' +
             responseText;
 
           testResult.className =
-            'error';
+            'result error';
 
         }
-
 
       } catch (error) {
 
         testResult.textContent =
-          '❌ AUTH CONNECTION FAILED\n\n' +
-          error.message;
+          '❌ NETWORK / CORS ERROR\n\n' +
+          'Message:\n' +
+          error.message +
+          '\n\n' +
+          'The browser could not complete the request.';
 
         testResult.className =
-          'error';
+          'result error';
 
       }
 
     }
 
 
-
     /*
-     * CHECK ADMIN
-     * =========================
-     */
-
-    async function checkAdmin(user) {
-
-      if (!user) {
-
-        return false;
-
-      }
-
-
-      const {
-        data,
-        error
-      } = await supabase
-        .from('admins')
-        .select('user_id')
-        .eq(
-          'user_id',
-          user.id
-        )
-        .maybeSingle();
-
-
-      if (error) {
-
-        throw new Error(
-          'Admin check failed:\n' +
-          error.message
-        );
-
-      }
-
-
-      return !!data;
-
-    }
-
-
-
-    /*
-     * SHOW ADMIN PANEL
-     * =========================
-     */
-
-    function showAdminPanel(user) {
-
-      loginBox.style.display =
-        'none';
-
-
-      adminPanel.style.display =
-        'block';
-
-
-      userInfo.textContent =
-        'Logged in as: ' +
-        user.email;
-
-    }
-
-
-
-    /*
-     * SHOW LOGIN
-     * =========================
-     */
-
-    function showLogin() {
-
-      loginBox.style.display =
-        'block';
-
-
-      adminPanel.style.display =
-        'none';
-
-
-      userInfo.textContent =
-        '';
-
-    }
-
-
-
-    /*
+     * ============================================================
      * LOGIN
-     * =========================
+     * ============================================================
      */
 
-    loginBtn.addEventListener(
-      'click',
-      async () => {
+    async function login() {
+
+      const email =
+        emailInput.value.trim();
+
+      const password =
+        passwordInput.value;
 
 
-        const email =
-          emailInput.value.trim();
+      if (!email || !password) {
+
+        loginResult.textContent =
+          '❌ Please enter email and password.';
+
+        loginResult.className =
+          'result error';
+
+        return;
+
+      }
 
 
-        const password =
-          passwordInput.value;
+      loginResult.textContent =
+        'Logging in...';
+
+      loginResult.className =
+        'result info';
 
 
-        if (!email) {
+      try {
 
-          showMessage(
-            'Email required!',
-            'error'
-          );
-
-          return;
-
-        }
-
-
-        if (!password) {
-
-          showMessage(
-            'Password required!',
-            'error'
-          );
-
-          return;
-
-        }
-
-
-        loginBtn.disabled =
-          true;
-
-
-        loginBtn.textContent =
-          'Logging in...';
-
-
-        showMessage(
-          'Connecting to Supabase...',
-          'info'
-        );
-
-
-        try {
-
-
-          /*
-           * SIGN IN
-           */
-
-          const {
-            data,
-            error
-          } = await supabase.auth
+        const {
+          data,
+          error
+        } =
+          await supabase.auth
             .signInWithPassword({
-
-              email: email,
-
-              password: password
-
+              email,
+              password
             });
 
 
+        if (error) {
 
-          /*
-           * LOGIN ERROR
-           */
+          loginResult.textContent =
+            '❌ LOGIN FAILED\n\n' +
+            error.message;
 
-          if (error) {
+          loginResult.className =
+            'result error';
 
-            showMessage(
-              'LOGIN ERROR:\n\n' +
-              error.message +
-              '\n\nError name: ' +
-              (
-                error.name ||
-                'Unknown'
-              ) +
-              '\n\nStatus: ' +
-              (
-                error.status ||
-                'Unknown'
-              ),
-              'error'
-            );
-
-            return;
-
-          }
-
-
-
-          /*
-           * USER
-           */
-
-          const user =
-            data.user;
-
-
-          if (!user) {
-
-            showMessage(
-              'Login completed but user was not returned.',
-              'error'
-            );
-
-            return;
-
-          }
-
-
-
-          /*
-           * ADMIN CHECK
-           */
-
-          showMessage(
-            'Login successful!\n\nChecking admin access...',
-            'info'
-          );
-
-
-          const isAdmin =
-            await checkAdmin(user);
-
-
-          if (!isAdmin) {
-
-            await supabase.auth.signOut();
-
-
-            showMessage(
-              'ACCESS DENIED!\n\n' +
-              'This account is not registered as an admin.',
-              'error'
-            );
-
-            return;
-
-          }
-
-
-
-          /*
-           * SUCCESS
-           */
-
-          showAdminPanel(user);
-
-
-        } catch (error) {
-
-          showMessage(
-            'UNEXPECTED ERROR:\n\n' +
-            error.message,
-            'error'
-          );
-
-        } finally {
-
-          loginBtn.disabled =
-            false;
-
-
-          loginBtn.textContent =
-            'Login';
+          return;
 
         }
 
-      }
-    );
 
+        if (!data || !data.user) {
+
+          loginResult.textContent =
+            '❌ Login succeeded but user data was not returned.';
+
+          loginResult.className =
+            'result error';
+
+          return;
+
+        }
+
+
+        /*
+         * ========================================================
+         * CHECK ADMIN
+         * ========================================================
+         */
+
+        const {
+          data: adminData,
+          error: adminError
+        } =
+          await supabase
+            .from('admins')
+            .select('user_id')
+            .eq(
+              'user_id',
+              data.user.id
+            )
+            .maybeSingle();
+
+
+        if (adminError) {
+
+          loginResult.textContent =
+            '❌ ADMIN CHECK FAILED\n\n' +
+            adminError.message;
+
+          loginResult.className =
+            'result error';
+
+          return;
+
+        }
+
+
+        if (!adminData) {
+
+          loginResult.textContent =
+            '❌ ACCESS DENIED\n\n' +
+            'This account is not registered as an admin.';
+
+          loginResult.className =
+            'result error';
+
+          await supabase.auth.signOut();
+
+          return;
+
+        }
+
+
+        /*
+         * ========================================================
+         * ADMIN LOGIN SUCCESS
+         * ========================================================
+         */
+
+        loginResult.textContent =
+          '✅ LOGIN SUCCESSFUL';
+
+        loginResult.className =
+          'result success';
+
+
+        loginCard.style.display =
+          'none';
+
+        adminPanel.style.display =
+          'block';
+
+
+        adminInfo.textContent =
+          '✅ Admin access granted.\n\n' +
+          'User ID:\n' +
+          data.user.id;
+
+
+      } catch (error) {
+
+        loginResult.textContent =
+          '❌ LOGIN ERROR\n\n' +
+          error.message;
+
+        loginResult.className =
+          'result error';
+
+      }
+
+    }
 
 
     /*
+     * ============================================================
      * LOGOUT
-     * =========================
+     * ============================================================
      */
 
-    logoutBtn.addEventListener(
+    async function logout() {
+
+      await supabase.auth.signOut();
+
+
+      adminPanel.style.display =
+        'none';
+
+      loginCard.style.display =
+        'block';
+
+
+      emailInput.value =
+        '';
+
+      passwordInput.value =
+        '';
+
+
+      loginResult.textContent =
+        'Logged out successfully.';
+
+      loginResult.className =
+        'result info';
+
+    }
+
+
+    /*
+     * ============================================================
+     * BUTTON EVENTS
+     * ============================================================
+     */
+
+    testButton.addEventListener(
       'click',
-      async () => {
-
-        try {
-
-          await supabase.auth
-            .signOut();
+      testAuthConnection
+    );
 
 
-          showLogin();
+    loginButton.addEventListener(
+      'click',
+      login
+    );
 
 
-          emailInput.value =
-            '';
+    logoutButton.addEventListener(
+      'click',
+      logout
+    );
 
 
-          passwordInput.value =
-            '';
+    /*
+     * ============================================================
+     * ENTER KEY LOGIN
+     * ============================================================
+     */
 
+    passwordInput.addEventListener(
+      'keydown',
+      function(event) {
 
-          showMessage(
-            'Logged out successfully.',
-            'success'
-          );
+        if (
+          event.key === 'Enter'
+        ) {
 
-
-        } catch (error) {
-
-          showMessage(
-            'Logout error:\n\n' +
-            error.message,
-            'error'
-          );
+          login();
 
         }
 
@@ -662,10 +668,10 @@
     );
 
 
-
     /*
-     * CHECK EXISTING SESSION
-     * =========================
+     * ============================================================
+     * INITIAL AUTH CHECK
+     * ============================================================
      */
 
     async function checkExistingSession() {
@@ -675,16 +681,16 @@
         const {
           data,
           error
-        } = await supabase.auth
-          .getSession();
+        } =
+          await supabase.auth
+            .getSession();
 
 
         if (error) {
 
-          showMessage(
-            'SESSION ERROR:\n\n' +
-            error.message,
-            'error'
+          console.log(
+            'Session check error:',
+            error
           );
 
           return;
@@ -693,26 +699,44 @@
 
 
         if (
+          data &&
           data.session &&
           data.session.user
         ) {
 
-          const isAdmin =
-            await checkAdmin(
-              data.session.user
-            );
+          const user =
+            data.session.user;
 
 
-          if (isAdmin) {
+          const {
+            data: adminData,
+            error: adminError
+          } =
+            await supabase
+              .from('admins')
+              .select('user_id')
+              .eq(
+                'user_id',
+                user.id
+              )
+              .maybeSingle();
 
-            showAdminPanel(
-              data.session.user
-            );
 
-          } else {
+          if (
+            !adminError &&
+            adminData
+          ) {
 
-            await supabase.auth
-              .signOut();
+            loginCard.style.display =
+              'none';
+
+            adminPanel.style.display =
+              'block';
+
+            adminInfo.textContent =
+              '✅ Existing admin session found.\n\n' +
+              'User ID:\n' +
+              user.id;
 
           }
 
@@ -720,10 +744,9 @@
 
       } catch (error) {
 
-        showMessage(
-          'STARTUP ERROR:\n\n' +
-          error.message,
-          'error'
+        console.log(
+          'Session check failed:',
+          error
         );
 
       }
@@ -731,26 +754,15 @@
     }
 
 
-
     /*
-     * START TEST
-     * =========================
-     */
-
-    testAuthConnection();
-
-
-    /*
-     * START SESSION CHECK
-     * =========================
+     * ============================================================
+     * START
+     * ============================================================
      */
 
     checkExistingSession();
 
-
   </script>
 
-
 </body>
-
 </html>
